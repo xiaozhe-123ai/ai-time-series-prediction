@@ -13,7 +13,7 @@
       font-family: system-ui, sans-serif;
     }
 
-    /* 学号姓名固定展示 */
+    /* 学号姓名固定展示（在这里改你的信息） */
     .user {
       position: fixed;
       top: 0;
@@ -85,7 +85,7 @@
 </head>
 
 <body>
-  <!-- 在这里改你的学号和姓名 -->
+  <!-- 在这里修改为你的学号和姓名 -->
   <div class="user">
     学号：XXXXXXXXXX &nbsp;&nbsp; 姓名：XXX
   </div>
@@ -132,7 +132,8 @@
     }
 
     // 构建时序样本
-    function createDataset(data, timeStep) {      let X = [], Y = [];
+    function createDataset(data, timeStep) {
+      let X = [], Y = [];
       for (let i = 0; i < data.length - timeStep; i++) {
         X.push(data.slice(i, i + timeStep));
         Y.push(data[i + timeStep]);
