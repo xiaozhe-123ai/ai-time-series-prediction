@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>AI时间序列预测系统</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="https://cdn.bootcdn.net/ajax/libs/tensorflow/4.14.0/tf.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -12,8 +12,6 @@
       box-sizing: border-box;
       font-family: system-ui, sans-serif;
     }
-
-    /* 学号姓名固定展示（已替换为你的信息） */
     .user {
       position: fixed;
       top: 0;
@@ -26,14 +24,12 @@
       font-size: 18px;
       z-index: 999;
     }
-
     body {
       padding: 80px 20px;
       background: #f8fafc;
       max-width: 1000px;
       margin: 0 auto;
     }
-
     .box {
       background: white;
       padding: 24px;
@@ -41,19 +37,16 @@
       box-shadow: 0 2px 10px #0001;
       margin-bottom: 20px;
     }
-
     h2 {
       margin-bottom: 16px;
       color: #1e293b;
       font-size: 28px;
     }
-
     p {
       font-size: 18px;
       color: #475569;
       margin-bottom: 20px;
     }
-
     .params {
       display: flex;
       gap: 24px;
@@ -61,14 +54,12 @@
       flex-wrap: wrap;
       align-items: center;
     }
-
     .param-item {
       display: flex;
       align-items: center;
       gap: 8px;
       font-size: 18px;
     }
-
     input {
       width: 80px;
       padding: 6px 8px;
@@ -76,7 +67,6 @@
       border: 1px solid #ddd;
       font-size: 16px;
     }
-
     button {
       padding: 10px 20px;
       background: #2563eb;
@@ -87,27 +77,22 @@
       margin-top: 10px;
       font-size: 16px;
     }
-
     button:hover {
       background: #1d4ed8;
     }
-
     #status {
       margin-top: 10px;
       color: #64748b;
       font-size: 16px;
     }
-
     #chart {
       width: 100%;
-      height: 400px;
+      height: 400px !important;
       margin-top: 20px;
     }
   </style>
 </head>
-
 <body>
-  <!-- 已替换为你的学号和姓名 -->
   <div class="user">
     学号：423830134 &nbsp;&nbsp; 姓名：肖哲
   </div>
@@ -115,7 +100,6 @@
   <div class="box">
     <h2>AI时间序列预测（LSTM）</h2>
     <p>模拟数据预测，可用于气温、流量、销量、股价等时序预测</p>
-
     <div class="params">
       <div class="param-item">
         <label>训练轮数：</label>
@@ -130,7 +114,6 @@
         <input type="number" id="predictLen" value="20" />
       </div>
     </div>
-
     <button onclick="startPredict()">开始训练并预测</button>
     <div id="status"></div>
   </div>
@@ -140,10 +123,9 @@
   </div>
 
   <script>
-    let ctx = document.getElementById('chart').getContext('2d');
+    const ctx = document.getElementById('chart').getContext('2d');
     let chart;
 
-    // 生成模拟时序数据
     function generateData(len = 100) {
       let arr = [];
       for (let i = 0; i < len; i++) {
@@ -153,7 +135,6 @@
       return arr;
     }
 
-    // 构建时序样本
     function createDataset(data, timeStep) {
       let X = [], Y = [];
       for (let i = 0; i < data.length - timeStep; i++) {
@@ -163,7 +144,6 @@
       return { X, Y };
     }
 
-    // 构建极简 LSTM 模型
     function buildModel(timeStep) {
       const model = tf.sequential();
       model.add(tf.layers.lstm({ units: 32, inputShape: [timeStep, 1] }));
@@ -177,6 +157,10 @@
       const timeStep = parseInt(document.getElementById('timeStep').value);
       const predictLen = parseInt(document.getElementById('predictLen').value);
       const status = document.getElementById('status');
+      const canvas = document.getElementById('chart');
+      const box = canvas.parentElement;
+      canvas.width = box.clientWidth;
+      canvas.height = 400;
 
       status.textContent = "正在生成数据...";
       const rawData = generateData(100);
@@ -202,7 +186,6 @@
       });
 
       status.textContent = "开始预测...";
-      // 多步预测
       let predictSeq = rawData.slice(-timeStep);
       let predicts = [];
 
@@ -214,51 +197,49 @@
         predictSeq.push(val);
       }
 
-      // 绘图
       const allX = Array.from({ length: rawData.length }, (_, i) => i);
       const predX = Array.from({ length: predicts.length }, (_, i) => i + rawData.length);
 
       if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          datasets: [
-            {
-              label: '历史数据',
-              data: rawData.map((v,i)=>({x:i,y:v})),
-              borderColor: '#2563eb',
-              fill: false,
-              borderWidth: 2
-            },
-            {
-              label: 'AI预测',
-              data: predicts.map((v,i)=>({x:i+rawData.length,y:v})),
-              borderColor: '#e11d48',
-              borderDash: [5,5],
-              fill: false,
-              borderWidth: 2
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          scales: {
-            x: { type: 'linear', position: 'bottom', title: { display: true, text: '时间步' } },
-            y: { title: { display: true, text: '数值' } }
+
+      setTimeout(() => {
+        chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            datasets: [
+              {
+                label: '历史数据',
+                data: rawData.map((v,i)=>({x:i,y:v})),
+                borderColor: '#2563eb',
+                fill: false,
+                borderWidth: 2
+              },
+              {
+                label: 'AI预测',
+                data: predicts.map((v,i)=>({x:i+rawData.length,y:v})),
+                borderColor: '#e11d48',
+                borderDash: [5,5],
+                fill: false,
+                borderWidth: 2
+              }
+            ]
           },
-          plugins: {
-            legend: {
-              labels: {
-                font: {
-                  size: 16
-                }
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { type: 'linear', position: 'bottom', title: { display: true, text: '时间步' } },
+              y: { title: { display: true, text: '数值' } }
+            },
+            plugins: {
+              legend: {
+                labels: { font: { size: 16 } }
               }
             }
           }
-        }
-      });
-
-      status.textContent = "预测完成！";
+        });
+        status.textContent = "预测完成！";
+      }, 100);
     }
   </script>
 </body>
