@@ -13,7 +13,7 @@
       font-family: system-ui, sans-serif;
     }
 
-    /* 学号姓名固定展示（在这里改你的信息） */
+    /* 学号姓名固定展示（已替换为你的信息） */
     .user {
       position: fixed;
       top: 0;
@@ -23,6 +23,7 @@
       padding: 10px 20px;
       border-radius: 0 0 12px 0;
       font-weight: bold;
+      font-size: 18px;
       z-index: 999;
     }
 
@@ -44,19 +45,28 @@
     h2 {
       margin-bottom: 16px;
       color: #1e293b;
+      font-size: 28px;
+    }
+
+    p {
+      font-size: 18px;
+      color: #475569;
+      margin-bottom: 20px;
     }
 
     .params {
       display: flex;
-      gap: 16px;
+      gap: 24px;
       margin: 12px 0;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .param-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      font-size: 18px;
     }
 
     input {
@@ -64,6 +74,7 @@
       padding: 6px 8px;
       border-radius: 6px;
       border: 1px solid #ddd;
+      font-size: 16px;
     }
 
     button {
@@ -74,6 +85,17 @@
       border-radius: 8px;
       cursor: pointer;
       margin-top: 10px;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #status {
+      margin-top: 10px;
+      color: #64748b;
+      font-size: 16px;
     }
 
     #chart {
@@ -85,6 +107,7 @@
 </head>
 
 <body>
+  <!-- 已替换为你的学号和姓名 -->
   <div class="user">
     学号：423830134 &nbsp;&nbsp; 姓名：肖哲
   </div>
@@ -109,7 +132,7 @@
     </div>
 
     <button onclick="startPredict()">开始训练并预测</button>
-    <div id="status" style="margin-top:10px; color:#666;"></div>
+    <div id="status"></div>
   </div>
 
   <div class="box">
@@ -204,22 +227,33 @@
               label: '历史数据',
               data: rawData.map((v,i)=>({x:i,y:v})),
               borderColor: '#2563eb',
-              fill: false
+              fill: false,
+              borderWidth: 2
             },
             {
               label: 'AI预测',
               data: predicts.map((v,i)=>({x:i+rawData.length,y:v})),
               borderColor: '#e11d48',
               borderDash: [5,5],
-              fill: false
+              fill: false,
+              borderWidth: 2
             }
           ]
         },
         options: {
           responsive: true,
           scales: {
-            x: { type: 'linear', position: 'bottom' },
+            x: { type: 'linear', position: 'bottom', title: { display: true, text: '时间步' } },
             y: { title: { display: true, text: '数值' } }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                font: {
+                  size: 16
+                }
+              }
+            }
           }
         }
       });
